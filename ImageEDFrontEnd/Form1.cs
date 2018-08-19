@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using ImageEDLib.Controlers.ImageEncryption;
 using ImageEDLib.Controlers.ImageOperations;
@@ -17,10 +18,21 @@ namespace ImageEDFrontEnd
 
         private void btnOpen_Click(object sender, EventArgs e)
         {
-            ImageEncryptor ie = new ImageEncryptor();
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                //Open the browsed image and display it
+                string OpenedFilePath = openFileDialog1.FileName;
+
+                (new ImageHolder()).DisplayImage((new ImageHolder().OpenImage(OpenedFilePath)), pictureBox1);
+
+                (new ImageHolder()).DisplayImage((new ImageEncryptor()).
+                    Encrypt(key: new KeyValuePair<string, int>("001010101110010101010", 2), source: new ImageHolder().OpenImage(OpenedFilePath)), pictureBox2);
+
+            }
             try
             {
-                ie.Encrypt("", "");
+                
             }
             catch (Exception exception)
             {
