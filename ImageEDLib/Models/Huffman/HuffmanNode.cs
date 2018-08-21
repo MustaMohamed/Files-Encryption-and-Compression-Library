@@ -99,6 +99,11 @@ namespace ImageEDLib.Models.Huffman
                 return hashCode;
             }
         }
+
+        public void Dispose()
+        {
+            RightNode = LeftNode =null;
+        }
     }
 
 

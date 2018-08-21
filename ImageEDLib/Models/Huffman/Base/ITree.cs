@@ -1,7 +1,8 @@
-﻿
+﻿using System;
+
 namespace ImageEDLib.Models.Huffman.Base
 {
-    interface ITree
+    interface ITree : IDisposable
     {
         void AddNode(object node);
         object GetNode(object nodeKey);

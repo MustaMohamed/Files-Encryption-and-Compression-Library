@@ -8,7 +8,6 @@ namespace ImageEDLib.Models.Huffman
 {
     public class HuffmanTree : ITree
     {
-
         // the root node that holds the tree
         public HuffmanNode RootNode { get; private set; }
 
@@ -50,13 +49,13 @@ namespace ImageEDLib.Models.Huffman
         public HuffmanTree(List<HuffmanNode> treeNodes) : this()
         {
             TreeNodes = treeNodes;
+            NodesCounter = treeNodes.Count;
         }
-
 
         public void AddNode(object node)
         {
             var tNode = node as HuffmanNode;
-            if (null != tNode) 
+            if (null != tNode)
             {
                 TreeNodes.Add(tNode);
                 NodesFrequency.Add(tNode.NodeValue, tNode.Frequincy);
@@ -67,7 +66,7 @@ namespace ImageEDLib.Models.Huffman
 
         public object GetNode(object nodeKey)
         {
-            return NodesFrequency[(int)nodeKey];
+            return NodesFrequency[(int) nodeKey];
         }
 
 
@@ -91,7 +90,7 @@ namespace ImageEDLib.Models.Huffman
 
             // set the flag to be true
             return IsBuilt = true;
-            
+
 //            throw new NotImplementedException();
         }
 
@@ -125,7 +124,7 @@ namespace ImageEDLib.Models.Huffman
                 NodesCounter++;
             }
 
-            NodesCounter += TreeNodes.Count;
+//            NodesCounter += TreeNodes.Count;
             // the final node is the root node
             RootNode = (HuffmanNode) PqNodeSelector.Dequeue();
         }
@@ -137,8 +136,7 @@ namespace ImageEDLib.Models.Huffman
         {
             // generate node paths
             SearchPath(RootNode, new StringBuilder());
-            // convert paths to char
-            ConvertPaths();
+
         }
 
         private void SearchPath(HuffmanNode node, StringBuilder path)
@@ -189,6 +187,21 @@ namespace ImageEDLib.Models.Huffman
                    "\n, mTreePaths=" + TreePaths.Count +
                    "\n, mTreeCode='" + TreeCode + '\'' +
                    "\n\t}";
+        }
+
+        public void Dispose()
+        {
+            RootNode.Dispose();
+            NodesCounter = 0;
+            PqNodeSelector.Clear();
+            PqNodeSelector = null;
+            NodesFrequency.Clear();
+            NodesFrequency = null;
+            TreeNodes.Clear();
+            TreeNodes = null;
+            TreePaths.Clear();
+            TreePaths = null;
+            TreeCode = null;
         }
     }
 }
