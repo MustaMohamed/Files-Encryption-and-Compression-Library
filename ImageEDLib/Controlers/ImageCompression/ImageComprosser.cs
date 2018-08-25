@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using ImageEDLib.Controlers.ImageCompression.Base;
-using ImageEDLib.Controlers.ImageOperations;
 using ImageEDLib.Models.Huffman;
 using ImageEDLib.Models.ImageContainers;
 
@@ -12,56 +10,49 @@ namespace ImageEDLib.Controlers.ImageCompression
     public class ImageComprosser : ICompressible
     {
         private long[,] _frequencies;
-        private HuffmanTree _redTree;
-        private HuffmanTree _greenTree;
-        private HuffmanTree _blueTree;
 
+        private readonly HuffmanTree _redTree = new HuffmanTree();
 
-        public ImageComprosser()
-        {
-            _frequencies = new long[3, 260];
-            _redTree = new HuffmanTree();
-            _greenTree = new HuffmanTree();
-            _blueTree = new HuffmanTree();
-        }
+        private readonly HuffmanTree _greenTree = new HuffmanTree();
 
-        private bool CheckArgumentValidation(ref object source)
-        {
-            return source is RGBPixel[,];
-        }
+        private readonly HuffmanTree _blueTree = new HuffmanTree();
 
         public object Compress(object source)
         {
-            if (CheckArgumentValidation(ref source))
+            if (ValidateArguments(ref source))
             {
                 RGBPixel[,] sourceImage = source as RGBPixel[,];
+                _frequencies = new long[3, 260];
                 InitFrequency(ref sourceImage);
-                InitHuffmanNodes();
-                BuildTees();
-                return GenerateCompressedObject(ref sourceImage);
+                return FastCompressionWithPreEncryption(ref sourceImage, ref _frequencies);
             }
-
-            throw new ArgumentException("Compression source object must be RGBPixel[,]");
+            else
+                throw new ArgumentException("Compression source object must be RGBPixel[,]");
         }
 
-        public object FastCompressionWithPreEncryption(ref RGBPixel[,] source, ref long[,] mFrequencies)
+        public object DeCompress(object source)
         {
-            RGBPixel[,] sourceImage = source as RGBPixel[,];
+            // TODO
+            throw new NotImplementedException();
+        }
+
+        private object FastCompressionWithPreEncryption(ref RGBPixel[,] sourceImage, ref long[,] mFrequencies)
+        {
             _frequencies = mFrequencies;
             InitHuffmanNodes();
             BuildTees();
             return GenerateCompressedObject(ref sourceImage);
         }
 
-        public object DeCompress(object source)
+        private bool ValidateArguments(ref object source)
         {
-            throw new NotImplementedException();
+            return source is RGBPixel[,];
         }
 
         private void InitFrequency(ref RGBPixel[,] sourceImage)
         {
-            int imageWidth = (new ImageHolder()).GetWidth(sourceImage),
-                imageHeight = (new ImageHolder()).GetHeight(sourceImage);
+            int imageWidth = (new ImageOperations.ImageOperations()).GetWidth(sourceImage),
+                imageHeight = (new ImageOperations.ImageOperations()).GetHeight(sourceImage);
             for (int i = 0; i < imageHeight; i++)
             {
                 for (int j = 0; j < imageWidth; j++)
@@ -102,8 +93,8 @@ namespace ImageEDLib.Controlers.ImageCompression
 
         private object GenerateCompressedObject(ref RGBPixel[,] sourceImage)
         {
-            int imageWidth = (new ImageHolder()).GetWidth(sourceImage),
-                imageHeight = (new ImageHolder()).GetHeight(sourceImage);
+            int imageWidth = (new ImageOperations.ImageOperations()).GetWidth(sourceImage),
+                imageHeight = (new ImageOperations.ImageOperations()).GetHeight(sourceImage);
             StringBuilder imageCode = new StringBuilder();
             for (int i = 0; i < imageHeight; i++)
             {
@@ -114,6 +105,7 @@ namespace ImageEDLib.Controlers.ImageCompression
                     imageCode.Append(_blueTree.GetNodePath((int) sourceImage[i, j].Blue));
                 }
             }
+
             _redTree.Dispose();
             _greenTree.Dispose();
             _blueTree.Dispose();
@@ -140,11 +132,11 @@ namespace ImageEDLib.Controlers.ImageCompression
 
                     a <<= 1;
                 }
+
                 list.Add(a);
             }
+
             return list.ToArray();
         }
-
-       
     }
 }

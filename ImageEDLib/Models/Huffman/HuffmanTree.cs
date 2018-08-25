@@ -6,45 +6,30 @@ using ImageEDLib.Models.Huffman.Exceptions;
 
 namespace ImageEDLib.Models.Huffman
 {
-    public class HuffmanTree : ITree
+    internal class HuffmanTree : ITree
     {
-        // the root node that holds the tree
         public HuffmanNode RootNode { get; private set; }
 
-        // the number of nodes in tree
         public int NodesCounter { get; private set; }
 
-        // the priority queue data structure to get the minimum node
+        public bool IsBuilt { get; private set; }
+
         private PriorityQueue<HuffmanNode> PqNodeSelector { set; get; }
 
-        // the nodes frequencies
         private Dictionary<int, long> NodesFrequency { get; set; }
 
-        // the tree nodes members
         public List<HuffmanNode> TreeNodes { get; set; }
 
-        // the path of each leaf node in tree
-        public Dictionary<int, String> TreePaths { get; private set; }
+        public Dictionary<int, string> TreePaths { get; private set; }
 
-        // the final tree code in binary string
-        public String TreeCode { get; set; }
-
-        // the flag of tree building
-        public bool IsBuilt { get; set; }
-
-        /**
-          * Empty Constructor initialize the data members
-          */
         public HuffmanTree()
         {
             RootNode = null;
             NodesCounter = 0;
             TreeNodes = new List<HuffmanNode>();
             NodesFrequency = new Dictionary<int, long>();
-            PqNodeSelector = new PriorityQueue<HuffmanNode>();
             TreePaths = new Dictionary<int, string>();
         }
-
 
         public HuffmanTree(List<HuffmanNode> treeNodes) : this()
         {
@@ -69,35 +54,25 @@ namespace ImageEDLib.Models.Huffman
             return NodesFrequency[(int) nodeKey];
         }
 
-
         public object GetNodePath(object nodeKey)
         {
             if (!IsBuilt)
                 throw new TreeNotBuiltException();
-            return TreePaths[(int)nodeKey];
+            return TreePaths[(int) nodeKey];
         }
 
         public bool BuildTree()
         {
-            // initialize the priority queue frequencies
             InitPq();
 
             // begin to generate the tree structure
             InitSelection();
 
-            // build nodes paths
             BuildPaths();
 
-            // set the flag to be true
             return IsBuilt = true;
-
-//            throw new NotImplementedException();
         }
 
-
-        /**
-         * copies all node in nodes list to the priority queue
-         */
         private void InitPq()
         {
             PqNodeSelector = new PriorityQueue<HuffmanNode>(TreeNodes);
@@ -114,17 +89,14 @@ namespace ImageEDLib.Models.Huffman
                 HuffmanNode rightNode = PqNodeSelector.Dequeue();
                 HuffmanNode leftNode = PqNodeSelector.Dequeue();
 
-                // merge the 2 nodes in parent node and set them to right and left nodes
                 HuffmanNode parentNode = new HuffmanNode(-1,
                     rightNode.Frequincy + leftNode.Frequincy,
                     leftNode, rightNode);
-                // add the parent node to PQ
+
                 PqNodeSelector.Enqueue(parentNode);
-                // increment the nodes counter
                 NodesCounter++;
             }
 
-//            NodesCounter += TreeNodes.Count;
             // the final node is the root node
             RootNode = (HuffmanNode) PqNodeSelector.Dequeue();
         }
@@ -134,9 +106,7 @@ namespace ImageEDLib.Models.Huffman
          */
         private void BuildPaths()
         {
-            // generate node paths
             SearchPath(RootNode, new StringBuilder());
-
         }
 
         private void SearchPath(HuffmanNode node, StringBuilder path)
@@ -148,7 +118,7 @@ namespace ImageEDLib.Models.Huffman
                 {
                     return;
                 }
-                else if (node.IsLeaf())
+                else if (node.IsLeaf)
                 {
                     TreePaths.Add(node.NodeValue, path.ToString());
                     return;
@@ -158,6 +128,7 @@ namespace ImageEDLib.Models.Huffman
                 path.Append('0');
                 SearchPath(node.RightNode, path);
                 path.Remove(path.Length - 1, 1);
+
                 // go to left node and add 0 to the path code
                 path.Append('1');
                 SearchPath(node.LeftNode, path);
@@ -165,27 +136,19 @@ namespace ImageEDLib.Models.Huffman
             }
             catch (NullReferenceException)
             {
+                // TODO
             }
-        }
-
-        private void ConvertPaths()
-        {
-            StringBuilder pathCode = new StringBuilder();
-            foreach (String tempstr in TreePaths.Values)
-                pathCode.Append(tempstr);
-            TreeCode = pathCode.ToString();
         }
 
         public override string ToString()
         {
             return "HuffmanTree\t{" +
-                   "\nmRootNode=" + RootNode +
-                   "\n, mNodeCounter=" + NodesCounter +
-                   "\n, mPQNodeSelector=" + PqNodeSelector.Count +
-                   "\n, mNodeFrequency=" + NodesFrequency.Count +
-                   "\n, mTreeNodes=" + TreeNodes.Count +
-                   "\n, mTreePaths=" + TreePaths.Count +
-                   "\n, mTreeCode='" + TreeCode + '\'' +
+                   "\n\tmRootNode=" + RootNode +
+                   "\n\t, mNodeCounter=" + NodesCounter +
+                   "\n\t, mPQNodeSelector=" + PqNodeSelector.Count +
+                   "\n\t, mNodeFrequency=" + NodesFrequency.Count +
+                   "\n\t, mTreeNodes=" + TreeNodes.Count +
+                   "\n\t, mTreePaths=" + TreePaths.Count +
                    "\n\t}";
         }
 
@@ -201,7 +164,6 @@ namespace ImageEDLib.Models.Huffman
             TreeNodes = null;
             TreePaths.Clear();
             TreePaths = null;
-            TreeCode = null;
         }
     }
 }

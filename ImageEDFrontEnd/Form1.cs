@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
+using ImageEDLib;
 using ImageEDLib.Controlers.ImageCompression;
 using ImageEDLib.Controlers.ImageEncryption;
 using ImageEDLib.Controlers.ImageOperations;
@@ -12,18 +13,20 @@ namespace ImageEDFrontEnd
 {
     public partial class Form1 : Form
     {
+        private RGBPixel[,] imageMatrix;
+        long[,] mFrequencies = new long[3, 260];
+        readonly ImageOperations _imageOperations = new ImageOperations();
+        readonly ImageEncryptor _imageEncryptor = new ImageEncryptor();
+        readonly ImageComprosser _imageComprosser = new ImageComprosser();
+        private string encryptKey;
+        private int tapIdx = 0;
+
         public Form1()
         {
             InitializeComponent();
+            ImageEncComp.Initialize(_imageOperations, _imageEncryptor, _imageComprosser);
         }
-
-        private RGBPixel[,] imageMatrix;
-        long[,] mFrequencies = new long[3, 260];
-        ImageHolder imageHolder = new ImageHolder();
-        ImageEncryptor imageEncryptor = new ImageEncryptor();
-        ImageComprosser imageComprosser = new ImageComprosser();
-        private string encryptKey;
-        private int tapIdx = 0;
+        
         private bool ValidateInput()
         {
             encryptKey = txtInitSeed.Text;
@@ -59,8 +62,8 @@ namespace ImageEDFrontEnd
             {
                 //Open the browsed image and display it
                 string OpenedFilePath = openFileDialog1.FileName;
-                imageMatrix = imageHolder.OpenImage(OpenedFilePath) as RGBPixel[,];
-                imageHolder.DisplayImage(imageMatrix, pictureBox1);
+                imageMatrix = ImageEncComp.OpenImage(OpenedFilePath) as RGBPixel[,];
+                ImageEncComp.DisplayImage(imageMatrix, pictureBox1);
             }
         }
 
@@ -69,9 +72,9 @@ namespace ImageEDFrontEnd
             if (!ValidateInput())
                 return;
 
-            imageMatrix = imageEncryptor.Encrypt(
+            imageMatrix = ImageEncComp.Encrypt(
                 new KeyValuePair<string, int>(encryptKey, tapIdx), imageMatrix) as RGBPixel[,];
-            imageHolder.DisplayImage(imageMatrix, pictureBox2);
+            ImageEncComp.DisplayImage(imageMatrix, pictureBox2);
         }
 
         private void btnFastEncAndCom_Click(object sender, EventArgs e)
@@ -79,12 +82,15 @@ namespace ImageEDFrontEnd
 
             if (!ValidateInput())
                 return;
-            imageMatrix = imageEncryptor.FastEmcryptionWithCompression(
-                new KeyValuePair<string, int>(encryptKey, tapIdx), ref imageMatrix,
+
+            // TODO: refactor fast algorithms again
+            var key = new KeyValuePair<string, int>(encryptKey, tapIdx);
+            imageMatrix = ImageEncComp.FastEncryptionWithCompression(
+               ref key, ref imageMatrix,
                 ref mFrequencies) as RGBPixel[,];
-            imageHolder.DisplayImage(imageMatrix, pictureBox2);
+            ImageEncComp.DisplayImage(imageMatrix, pictureBox2);
             var compressedResultObject =
-                imageComprosser.FastCompressionWithPreEncryption(ref imageMatrix, ref mFrequencies);
+                ImageEncComp.FastCompressionWithPreEncryption(ref imageMatrix, ref mFrequencies);
             SaveFile(compressedResultObject);
             
         }
@@ -93,7 +99,7 @@ namespace ImageEDFrontEnd
         {
             
             var compressedResultObject =
-                imageComprosser.Compress(imageMatrix);
+                ImageEncComp.Compress(imageMatrix);
             SaveFile(compressedResultObject);
         }
 

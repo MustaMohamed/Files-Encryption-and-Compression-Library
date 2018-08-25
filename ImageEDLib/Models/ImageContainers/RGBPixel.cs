@@ -1,8 +1,11 @@
-﻿
-namespace ImageEDLib.Models.ImageContainers
+﻿namespace ImageEDLib.Models.ImageContainers
 {
     public class RGBPixel
     {
+        public byte Red { get; set; }
+        public byte Green { get; set; }
+        public byte Blue { get; set; }
+
         public RGBPixel(byte red, byte green, byte blue)
         {
             Red = red;
@@ -13,9 +16,5 @@ namespace ImageEDLib.Models.ImageContainers
         public RGBPixel()
         {
         }
-
-        public byte Red { get; set; }
-        public byte Green { get; set; }
-        public byte Blue { get; set; }
     }
 }

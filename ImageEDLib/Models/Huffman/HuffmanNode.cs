@@ -4,35 +4,36 @@ using ImageEDLib.Models.Huffman.Base;
 
 namespace ImageEDLib.Models.Huffman
 {
-    public class HuffmanNode : INode<int>
+    internal class HuffmanNode : INode<int>
     {
-
         public int NodeValue { get; set; }
         public long Frequincy { get; set; }
         public HuffmanNode RightNode { get; set; }
         public HuffmanNode LeftNode { get; set; }
-        private bool Leaf
-        {
-            get { return RightNode == null && LeftNode == null; }
-            // ReSharper disable once ValueParameterNotUsed
-            set{ }
-        }
 
-        public HuffmanNode(int nodeValue = -1, long nodeFrequincy = -1, HuffmanNode rightNode = null, HuffmanNode leftNode = null)
+
+        public HuffmanNode(int nodeValue = -1, long nodeFrequincy = -1, HuffmanNode rightNode = null,
+            HuffmanNode leftNode = null)
         {
             NodeValue = nodeValue;
             Frequincy = nodeFrequincy;
             RightNode = rightNode;
             LeftNode = leftNode;
-            Leaf = rightNode == null && leftNode == null;
+            IsLeaf = rightNode == null && leftNode == null;
         }
 
-        public HuffmanNode(HuffmanNode thatNode) : this(thatNode.NodeValue, thatNode.Frequincy, thatNode.RightNode, thatNode.LeftNode) { }
 
-        public bool IsLeaf()
+        public HuffmanNode(HuffmanNode thatNode) : this(thatNode.NodeValue, thatNode.Frequincy, thatNode.RightNode,
+            thatNode.LeftNode)
         {
-            return Leaf;
         }
+
+        public bool IsLeaf
+        {
+            get { return RightNode == null && LeftNode == null; }
+            private set { }
+        }
+
         public int CompareTo(object obj)
         {
             if (obj == null) return 1;
@@ -49,10 +50,10 @@ namespace ImageEDLib.Models.Huffman
                 throw new ArgumentException("Object is not a HuffmanNode");
         }
 
-       
 
         public object Clone()
         {
+            // TODO
             throw new NotImplementedException();
         }
 
@@ -63,7 +64,7 @@ namespace ImageEDLib.Models.Huffman
             strB.Append("Frequincy :=> " + Frequincy + "\n");
             try
             {
-                if (!IsLeaf())
+                if (!IsLeaf)
                 {
                     strB.Append("Left Node :=> " + LeftNode + "\n");
                     strB.Append("Righr Node :=> " + RightNode + "\n");
@@ -71,7 +72,7 @@ namespace ImageEDLib.Models.Huffman
             }
             catch (Exception)
             {
-                // ignored
+                // TODO
             }
 
             return strB.ToString();
@@ -85,7 +86,8 @@ namespace ImageEDLib.Models.Huffman
 
         private bool Equals(HuffmanNode other)
         {
-            return NodeValue == other.NodeValue && Frequincy == other.Frequincy && Equals(RightNode, other.RightNode) && Equals(LeftNode, other.LeftNode);
+            return NodeValue == other.NodeValue && Frequincy == other.Frequincy && Equals(RightNode, other.RightNode) &&
+                   Equals(LeftNode, other.LeftNode);
         }
 
         public override int GetHashCode()
@@ -102,9 +104,7 @@ namespace ImageEDLib.Models.Huffman
 
         public void Dispose()
         {
-            RightNode = LeftNode =null;
+            RightNode = LeftNode = null;
         }
     }
-
-
 }

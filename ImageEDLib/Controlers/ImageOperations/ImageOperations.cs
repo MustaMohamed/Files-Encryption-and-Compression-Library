@@ -2,17 +2,13 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using ImageEDLib.Controlers.ImageCompression.Base;
-using ImageEDLib.Controlers.ImageEncryption.Base;
 using ImageEDLib.Controlers.ImageOperations.Base;
 using ImageEDLib.Models.ImageContainers;
 
 namespace ImageEDLib.Controlers.ImageOperations
 {
-    public class ImageHolder : IImageHolder
+    public class ImageOperations : IImageHolder
     {
-        public ImageHolder() { }
-
         public object OpenImage(string imagePath)
         {
             Bitmap originalBm = new Bitmap(imagePath);
@@ -83,10 +79,9 @@ namespace ImageEDLib.Controlers.ImageOperations
         public void DisplayImage(object sourceMatrix, PictureBox picBox)
         {
             var imageMatrix = sourceMatrix as RGBPixel[,];
-            if(imageMatrix == null)
+            if (imageMatrix == null)
                 throw new ArgumentException("sourceMatrix object must RGBPixel[,]");
-            // Create Image:
-            //==============
+
             int height = imageMatrix.GetLength(0);
             int width = imageMatrix.GetLength(1);
 
@@ -139,6 +134,7 @@ namespace ImageEDLib.Controlers.ImageOperations
             var imageMatrix = sourceMatrix as RGBPixel[,];
             if (imageMatrix == null)
                 throw new ArgumentException("sourceMatrix object must RGBPixel[,]");
+            // TODO
             throw new System.NotImplementedException();
         }
     }

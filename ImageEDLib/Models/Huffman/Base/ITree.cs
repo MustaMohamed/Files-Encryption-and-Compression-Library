@@ -9,5 +9,6 @@ namespace ImageEDLib.Models.Huffman.Base
         object GetNodePath(object nodeKey);
         bool BuildTree();
         int NodesCounter { get; }
+        bool IsBuilt { get; }
     }
 }

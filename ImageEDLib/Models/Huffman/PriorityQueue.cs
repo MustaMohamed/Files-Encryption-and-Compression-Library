@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageEDLib.Models.Huffman
 {
-    class PriorityQueue<T> where T : IComparable
+    internal class PriorityQueue<T> where T : IComparable
     {
         private List<T> list;
-        public int Count { get { return list.Count; } }
+
+        public int Count
+        {
+            get { return list.Count; }
+        }
+
         public readonly bool IsDescending;
 
         public PriorityQueue()
@@ -25,11 +27,13 @@ namespace ImageEDLib.Models.Huffman
 
         public PriorityQueue(int capacity)
             : this(capacity, false)
-        { }
+        {
+        }
 
         public PriorityQueue(IEnumerable<T> collection)
             : this(collection, false)
-        { }
+        {
+        }
 
         public PriorityQueue(int capacity, bool isdesc)
         {

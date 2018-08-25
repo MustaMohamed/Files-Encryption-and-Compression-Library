@@ -43,13 +43,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="Controlers\ImageCompression\Base\ICompressible.cs" />
     <Compile Include="Controlers\ImageCompression\ImageComprosser.cs" />
     <Compile Include="Controlers\ImageEncryption\Base\IEncryptable.cs" />
     <Compile Include="Controlers\ImageEncryption\ImageEncryptor.cs" />
     <Compile Include="Controlers\ImageOperations\Base\IImageHolder.cs" />
-    <Compile Include="Controlers\ImageOperations\ImageHolder.cs" />
+    <Compile Include="Controlers\ImageOperations\ImageOperations.cs" />
+    <Compile Include="ImageEncComp.cs" />
     <Compile Include="Models\Huffman\Base\ITree.cs" />
     <Compile Include="Models\Huffman\HuffmanNode.cs" />
     <Compile Include="Models\Huffman\Base\INode.cs" />
